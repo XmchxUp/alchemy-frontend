@@ -4,15 +4,7 @@ import { FaGithubAlt } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { AiOutlineMail } from "react-icons/ai";
 
-import {
-  Modal,
-  useModal,
-  Input,
-  Row,
-  Checkbox,
-  Button,
-  Text,
-} from "@nextui-org/react";
+import { Modal, useModal, Input, Button, Text } from "@nextui-org/react";
 import confetti from "canvas-confetti";
 import bgVideo from "../assets/bg.mp4";
 import logo from "../assets/logowhite.png";
@@ -30,7 +22,7 @@ const Login = () => {
   };
 
   const firework = () => {
-    var duration = 15 * 1000;
+    var duration = 5 * 1000;
     var animationEnd = Date.now() + duration;
     var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
@@ -167,6 +159,7 @@ const Login = () => {
                 clearable
                 bordered
                 fullWidth
+                aria-label="Email"
                 size="lg"
                 placeholder="Email"
                 contentLeft={<AiOutlineMail />}
@@ -177,18 +170,13 @@ const Login = () => {
                 clearable
                 bordered
                 fullWidth
+                aria-label="Password"
                 size="lg"
                 placeholder="Password"
                 contentLeft={<RiLockPasswordLine />}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Row justify="space-between">
-                <Checkbox>
-                  <Text size={14}>Remember me</Text>
-                </Checkbox>
-                <Text size={14}>Forgot password?</Text>
-              </Row>
             </Modal.Body>
             <Modal.Footer>
               <Button auto flat color="error" onClick={closeHandler}>

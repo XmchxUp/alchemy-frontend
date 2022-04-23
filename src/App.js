@@ -14,7 +14,7 @@ const App = () => {
         : localStorage.clear();
 
     if (!User) navigate("/login");
-  }, []);
+  }, [navigate]);
 
   return (
     <Routes>
