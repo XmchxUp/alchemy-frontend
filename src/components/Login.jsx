@@ -3,17 +3,32 @@ import { BiWinkTongue } from "react-icons/bi";
 import { FaGithubAlt } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { AiOutlineMail } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import {
+  Modal,
+  useModal,
+  Input,
+  Button,
+  Text,
+  Row,
+  Checkbox,
+} from "@nextui-org/react";
+import { ToastContainer, toast } from "react-toastify";
 
-import { Modal, useModal, Input, Button, Text } from "@nextui-org/react";
 import confetti from "canvas-confetti";
 import bgVideo from "../assets/bg.mp4";
 import logo from "../assets/logowhite.png";
 
+import { getCurrentUser, login } from "../utils/APIUtils";
+import { ACCESS_TOKEN } from "../utils/constants";
+
 const Login = () => {
   const [flag, setFlag] = useState(false);
   const [nativeVisible, setNativeVisible] = useState(false);
-  const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const { setVisible, bindings } = useModal();
 
@@ -70,12 +85,53 @@ const Login = () => {
   };
 
   const handleLoginModal = () => {
-    console.log(email + ": " + password);
-    setNativeVisible(false);
+    console.log(usernameOrEmail + ": " + password + ": " + rememberMe);
+    const loginRequest = { usernameOrEmail, password, rememberMe };
+    let msg = "";
+    login(loginRequest)
+      .then((response) => {
+        localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+        msg = "登陆成功";
+        loadCurrentUser();
+        setNativeVisible(false);
+      })
+      .catch((error) => {
+        msg = error.message;
+      })
+      .finally(() => {
+        toast("🦄 " + msg, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          progress: undefined,
+        });
+      });
+  };
+
+  const loadCurrentUser = () => {
+    getCurrentUser()
+      .then((response) => {
+        localStorage.setItem("user", JSON.stringify(response));
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
     <div className="flex justify-start items-center flex-col h-screen">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className=" relative w-full h-full">
         <video
           src={bgVideo}
@@ -141,7 +197,7 @@ const Login = () => {
 
           <Modal
             closeButton
-            blur
+            scroll
             aria-labelledby="modal-title"
             open={nativeVisible}
             onClose={closeHandler}
@@ -159,12 +215,12 @@ const Login = () => {
                 clearable
                 bordered
                 fullWidth
-                aria-label="Email"
+                aria-label="UsernameOrEmail"
                 size="lg"
-                placeholder="Email"
+                placeholder="UsernameOrEmail"
                 contentLeft={<AiOutlineMail />}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
               />
               <Input
                 clearable
@@ -177,6 +233,12 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <Row justify="space-between">
+                <Checkbox onChange={() => setRememberMe(!rememberMe)}>
+                  <Text size={14}>Remember me</Text>
+                </Checkbox>
+                <Text size={14}>Forgot password?</Text>
+              </Row>
             </Modal.Body>
             <Modal.Footer>
               <Button auto flat color="error" onClick={closeHandler}>
