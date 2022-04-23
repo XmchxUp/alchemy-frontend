@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiWinkTongue } from "react-icons/bi";
 import { FaGithubAlt } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -31,6 +31,11 @@ const Login = () => {
   const navigate = useNavigate();
 
   const { setVisible, bindings } = useModal();
+
+  useEffect(() => {
+    // 用于校验一次token信息
+    loadCurrentUser();
+  }, []);
 
   const randomInRange = (min, max) => {
     return Math.random() * (max - min) + min;
@@ -115,6 +120,7 @@ const Login = () => {
         navigate("/");
       })
       .catch((error) => {
+        localStorage.clear();
         console.log(error);
       });
   };
