@@ -19,15 +19,23 @@ import confetti from "canvas-confetti";
 import bgVideo from "../assets/bg.mp4";
 import logo from "../assets/logowhite.png";
 
-import { getCurrentUser, login } from "../utils/APIUtils";
+import { getCurrentUser, login, register } from "../utils/APIUtils";
 import { ACCESS_TOKEN } from "../utils/constants";
+import { uuid } from "../utils";
 
 const Login = () => {
   const [flag, setFlag] = useState(false);
   const [nativeVisible, setNativeVisible] = useState(false);
+  const [regModal, setRegModal] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [regUserInfo, setRegUserInfo] = useState({
+    username: "",
+    password: "",
+    email: "",
+    nickname: "",
+  });
   const navigate = useNavigate();
 
   const { setVisible, bindings } = useModal();
@@ -87,6 +95,7 @@ const Login = () => {
 
   const closeHandler = () => {
     setNativeVisible(false);
+    setRegModal(false);
   };
 
   const handleLoginModal = () => {
@@ -125,6 +134,52 @@ const Login = () => {
       });
   };
 
+  const handleRegister = () => {
+    confetti({
+      angle: randomInRange(55, 125),
+      spread: randomInRange(50, 70),
+      particleCount: randomInRange(50, 100),
+      origin: { y: 0.6 },
+    });
+    setRegModal(true);
+  };
+
+  const handleRegisterModal = () => {
+    setRegUserInfo({
+      ...regUserInfo,
+      nickname: "Tesla" + uuid(),
+    });
+    let msg = "";
+    register(regUserInfo)
+      .then((response) => {
+        console.log(response);
+        msg = "注册成功, 请去登陆！";
+        setRegModal(false);
+      })
+      .catch((error) => {
+        msg = error.message;
+        console.log(msg);
+      })
+      .finally(() => {
+        toast("🦄 " + msg, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          progress: undefined,
+        });
+      });
+  };
+
+  const handleRegInputChange = (event) => {
+    const target = event.target;
+    const inputName = target.name;
+    const inputValue = target.value;
+
+    setRegUserInfo({
+      ...regUserInfo,
+      [inputName]: inputValue,
+    });
+  };
   return (
     <div className="flex justify-start items-center flex-col h-screen">
       <ToastContainer
@@ -157,6 +212,103 @@ const Login = () => {
           <Button auto shadow disabled={flag} onClick={() => setVisible(true)}>
             README
           </Button>
+
+          {/* 登陆按钮 */}
+          <Button
+            disabled={!flag}
+            size="lg"
+            rounded
+            onClick={handleNativeLogin}
+            shadow
+            className="mt-4"
+          >
+            <BiWinkTongue className="mr-4" /> Sign in
+          </Button>
+
+          <Button
+            disabled={!flag}
+            size="lg"
+            rounded
+            onClick={handleRegister}
+            shadow
+            className="mt-4"
+          >
+            <BiWinkTongue className="mr-4" /> Sign Up
+          </Button>
+
+          <Button
+            size="lg"
+            rounded
+            disabled={!flag}
+            onClick={handleGithubLogin}
+            shadow
+            className="mt-6"
+          >
+            <FaGithubAlt className="mr-4" /> Sign in with Github
+          </Button>
+
+          {/* 注册 */}
+          <Modal
+            closeButton
+            scroll
+            aria-labelledby="modal-title"
+            open={regModal}
+            onClose={closeHandler}
+          >
+            <Modal.Header>
+              <Text id="modal-title" size={18}>
+                Welcome to{" "}
+                <Text b size={18}>
+                  Sharing By Tesla
+                </Text>
+              </Text>
+            </Modal.Header>
+            <Modal.Body>
+              <Input
+                clearable
+                bordered
+                fullWidth
+                label="Username"
+                size="lg"
+                name="username"
+                value={regUserInfo.username}
+                onChange={(e) => handleRegInputChange(e)}
+              />
+              <Input
+                clearable
+                bordered
+                fullWidth
+                size="lg"
+                label="Email"
+                name="email"
+                value={regUserInfo.email}
+                onChange={(e) => handleRegInputChange(e)}
+              />
+              <Input
+                clearable
+                bordered
+                fullWidth
+                size="lg"
+                label="Password"
+                name="password"
+                value={regUserInfo.password}
+                onChange={(e) => handleRegInputChange(e)}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button auto flat color="error" onClick={closeHandler}>
+                Close
+              </Button>
+              <Button
+                auto
+                style={{ color: "#14b8a6" }}
+                onClick={handleRegisterModal}
+              >
+                Sign Up
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          {/*  协议 */}
           <Modal
             scroll
             width="600px"
@@ -188,19 +340,7 @@ const Login = () => {
               </Button>
             </Modal.Footer>
           </Modal>
-
-          {/* 登陆按钮 */}
-          <Button
-            disabled={!flag}
-            size="lg"
-            rounded
-            onClick={handleNativeLogin}
-            shadow
-            className="mt-4"
-          >
-            <BiWinkTongue className="mr-4" /> Sign in
-          </Button>
-
+          {/* 登陆 */}
           <Modal
             closeButton
             scroll
@@ -259,17 +399,6 @@ const Login = () => {
               </Button>
             </Modal.Footer>
           </Modal>
-
-          <Button
-            size="lg"
-            rounded
-            disabled={!flag}
-            onClick={handleGithubLogin}
-            shadow
-            className="mt-6"
-          >
-            <FaGithubAlt className="mr-4" /> Sign in with Github
-          </Button>
         </div>
       </div>
     </div>

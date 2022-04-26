@@ -43,3 +43,26 @@ export function getCurrentUser() {
     method: "GET",
   });
 }
+
+export function register(signUpRequest) {
+  return request({
+    url: API_BASE_URL + "/auth/signup",
+    method: "POST",
+    body: JSON.stringify(signUpRequest),
+  });
+}
+
+// TODO: 提高前端用户体验
+export function checkUsernameAvailability(username) {
+  return request({
+    url: API_BASE_URL + "/user/checkUsernameAvailability?username=" + username,
+    method: "GET",
+  });
+}
+
+export function checkEmailAvailability(email) {
+  return request({
+    url: API_BASE_URL + "/user/checkEmailAvailability?email=" + email,
+    method: "GET",
+  });
+}
