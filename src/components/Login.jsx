@@ -19,8 +19,18 @@ import confetti from "canvas-confetti";
 import bgVideo from "../assets/bg.mp4";
 import logo from "../assets/logowhite.png";
 
-import { getCurrentUser, login, register } from "../utils/APIUtils";
-import { ACCESS_TOKEN } from "../utils/constants";
+import {
+  getCurrentUser,
+  githubLogin,
+  login,
+  register,
+} from "../utils/APIUtils";
+import {
+  ACCESS_TOKEN,
+  AUTHORIZE_URL,
+  CLIENT_ID,
+  REDIRECT_URI,
+} from "../utils/constants";
 import { uuid } from "../utils";
 
 const Login = () => {
@@ -41,8 +51,34 @@ const Login = () => {
   const { setVisible, bindings } = useModal();
 
   useEffect(() => {
-    // 用于校验一次token信息
-    loadCurrentUser();
+    // github 登陆的重定向
+    const url = window.location.href;
+
+    const hasCode = url.includes("?code=");
+
+    if (hasCode) {
+      const code = url.split("?code=")[1];
+      console.log(code);
+      //  TODO: 后台请求github的数据 注册username or email 默认密码为123456
+      githubLogin(code)
+        .then((resp) => {
+          console.log(resp);
+          localStorage.setItem(ACCESS_TOKEN, resp.accessToken);
+          loadCurrentUser();
+        })
+        .catch((err) => {
+          console.log(err);
+          toast("🦄 请求超时！请重试", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            progress: undefined,
+          });
+        });
+    } else {
+      // 用于校验一次token信息
+      loadCurrentUser();
+    }
   }, []);
 
   const randomInRange = (min, max) => {
@@ -91,6 +127,7 @@ const Login = () => {
 
   const handleGithubLogin = () => {
     firework();
+    window.location.href = `${AUTHORIZE_URL}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
   };
 
   const closeHandler = () => {
@@ -239,9 +276,9 @@ const Login = () => {
           <Button
             size="lg"
             rounded
+            shadow
             disabled={!flag}
             onClick={handleGithubLogin}
-            shadow
             className="mt-6"
           >
             <FaGithubAlt className="mr-4" /> Sign in with Github

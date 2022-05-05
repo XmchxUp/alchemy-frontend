@@ -16,3 +16,9 @@ export const EMAIL_MAX_LENGTH = 40;
 
 export const PASSWORD_MIN_LENGTH = 6;
 export const PASSWORD_MAX_LENGTH = 20;
+
+export const CLIENT_ID = "be4f2d1a98976190b2ff";
+export const CLIENT_SECRET = "4efbaffc85f73e91d16464edb14b2292707b07df";
+
+export const AUTHORIZE_URL = "https://github.com/login/oauth/authorize";
+export const REDIRECT_URI = 'http://localhost:3000/login';

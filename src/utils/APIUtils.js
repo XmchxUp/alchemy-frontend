@@ -33,6 +33,14 @@ export function login(loginRequest) {
   });
 }
 
+export function githubLogin(code) {
+  return request({
+    url: `${API_BASE_URL}/auth/github/signin?code=${code}`,
+    method: "POST",
+  });
+}
+
+
 export function getCurrentUser() {
   if (!localStorage.getItem(ACCESS_TOKEN)) {
     return Promise.reject("No access token set.");
@@ -52,7 +60,7 @@ export function register(signUpRequest) {
   });
 }
 
-// TODO: 提高前端用户体验
+// TODO: 用于提高前端用户体验
 export function checkUsernameAvailability(username) {
   return request({
     url: API_BASE_URL + "/user/checkUsernameAvailability?username=" + username,
