@@ -59,7 +59,6 @@ const Login = () => {
     if (hasCode) {
       const code = url.split("?code=")[1];
       console.log(code);
-      //  TODO: 后台请求github的数据 注册username or email 默认密码为123456
       githubLogin(code)
         .then((resp) => {
           console.log(resp);
@@ -217,6 +216,7 @@ const Login = () => {
       [inputName]: inputValue,
     });
   };
+
   return (
     <div className="flex justify-start items-center flex-col h-screen">
       <ToastContainer
@@ -359,7 +359,7 @@ const Login = () => {
               </Text>
             </Modal.Header>
             <Modal.Body>
-              <Text id="modal-description">拒绝约炮 By Tesla</Text>
+              <Text id="modal-description">No Sex By Tesla</Text>
             </Modal.Body>
             <Modal.Footer>
               <Button auto flat color="error" onClick={() => setVisible(false)}>
@@ -418,7 +418,7 @@ const Login = () => {
               />
               <Row justify="space-between">
                 <Checkbox onChange={() => setRememberMe(!rememberMe)}>
-                  <Text size={14}>Remember me</Text>
+                  <Text size={14}>Remember me (save 7 days)</Text>
                 </Checkbox>
                 <Text size={14}>Forgot password?</Text>
               </Row>
