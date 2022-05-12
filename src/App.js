@@ -4,17 +4,15 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Login from "./components/Login";
 import Home from "./container/Home";
+import { fetchUser } from "./utils";
 
 const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const User =
-      localStorage.getItem("user") !== "undefined"
-        ? JSON.parse(localStorage.getItem("user"))
-        : localStorage.clear();
+    const user = fetchUser();
 
-    if (!User) navigate("/login");
+    if (!user) navigate("/login");
   }, []);
 
   return (

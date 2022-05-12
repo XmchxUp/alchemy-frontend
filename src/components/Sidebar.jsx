@@ -37,7 +37,7 @@ const Sidebar = ({ closeToggle, user }) => {
             主页
           </NavLink>
           <h3 className="mt-2 px-5 text-base 2xl:text-xl">
-          🥰 探索 ~ ~ 分类
+            🥰 Explore weird category...
           </h3>
           {categories.slice(0, categories.length).map((category) => (
             <NavLink

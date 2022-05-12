@@ -354,12 +354,12 @@ const Login = () => {
             {...bindings}
           >
             <Modal.Header>
-              <Text id="modal-title" size={18}>
+              <Text id="modal-title" color="red" size={18}>
                 关于此站点相关的信息
               </Text>
             </Modal.Header>
             <Modal.Body>
-              <Text id="modal-description">No Sex By Tesla</Text>
+              <Text id="modal-description"  color="green">客官不可以有顔色哦 By Tesla</Text>
             </Modal.Body>
             <Modal.Footer>
               <Button auto flat color="error" onClick={() => setVisible(false)}>
