@@ -11,3 +11,9 @@ export function fetchUser() {
     ? JSON.parse(localStorage.getItem("user"))
     : localStorage.clear();
 }
+
+export function fetchCategories() {
+  return localStorage.getItem("categories") !== "undefined"
+    ? JSON.parse(localStorage.getItem("categories"))
+    : null;
+}

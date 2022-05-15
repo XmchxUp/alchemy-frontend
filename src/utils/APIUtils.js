@@ -74,3 +74,10 @@ export function checkEmailAvailability(email) {
     method: "GET",
   });
 }
+
+export function getAllCategory() {
+  return request({
+    url: API_BASE_URL + "/category/all",
+    method: "GET",
+  });
+}
