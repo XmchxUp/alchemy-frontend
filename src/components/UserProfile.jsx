@@ -33,7 +33,6 @@ const UserProfile = () => {
 
   const logout = () => {
     localStorage.clear();
-
     navigate("/login");
   };
 
@@ -59,7 +58,15 @@ const UserProfile = () => {
             {user.username}
           </h1>
           <div className="absolute top-0 z-1 right-0 p-2">
-            {userId === User.id && <div>Google Login</div>}
+            {userId == User.id && (
+              <button
+                type="button"
+                className=" bg-white p-2 rounded-full cursor-pointer outline-none shadow-md"
+                onClick={logout}
+              >
+                <AiOutlineLogout color="red" fontSize={21} />
+              </button>
+            )}
           </div>
         </div>
         <div className="text-center mb-7">
