@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { getPinDetail } from "../utils/APIUtils";
 
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
@@ -45,10 +46,10 @@ const PinDetail = ({ user }) => {
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
 
-  const fetchPinDetails = () => {};
-
   useEffect(() => {
-    fetchPinDetails();
+    getPinDetail(pinId).then((resp) => {
+      setPinDetail(resp);
+    });
   }, [pinId]);
 
   const addComment = () => {

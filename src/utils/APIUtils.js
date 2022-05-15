@@ -81,3 +81,17 @@ export function getAllCategory() {
     method: "GET",
   });
 }
+
+export function getAllPin() {
+  return request({
+    url: API_BASE_URL + "/pin/all",
+    method: "GET",
+  });
+}
+
+export function getPinDetail(pinId) {
+  return request({
+    url: API_BASE_URL + `/pin/${pinId}`,
+    method: "GET",
+  });
+}
