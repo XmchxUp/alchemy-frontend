@@ -2,20 +2,27 @@ import React, { useState, useEffect } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
 
 import Spinner from "./Spinner";
 import { Avatar } from "@nextui-org/react";
-import { getAllCategory } from "../utils/APIUtils";
+import {
+  getAllCategory,
+  savePinDetail,
+  uploadSingleFile,
+} from "../utils/APIUtils";
 import { fetchCategories } from "../utils";
 
 const CreatePin = ({ user }) => {
   const [title, setTitle] = useState("");
   const [about, setAbout] = useState("");
-  const [loading, setLoading] = useState(false);
   const [destination, setDestination] = useState("");
+  const [image, setImage] = useState("");
+  const [categoryId, setCategoryId] = useState();
+  const [loading, setLoading] = useState(false);
+
   const [fields, setFields] = useState(false);
-  const [category, setCategory] = useState();
-  const [imageAsset, setImageAsset] = useState();
+
   const [wrongImageType, setWrongImageType] = useState(false);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
@@ -39,7 +46,6 @@ const CreatePin = ({ user }) => {
   const uploadImage = (e) => {
     console.log("上传图片！");
     const selectedFile = e.target.files[0];
-    // uploading asset to sanity
     if (
       selectedFile.type === "image/png" ||
       selectedFile.type === "image/svg" ||
@@ -49,6 +55,13 @@ const CreatePin = ({ user }) => {
     ) {
       setWrongImageType(false);
       setLoading(true);
+
+      console.log(selectedFile);
+      uploadSingleFile(selectedFile).then((resp) => {
+        console.log(resp);
+        setImage(resp.image);
+        setLoading(false);
+      });
     } else {
       setLoading(false);
       setWrongImageType(true);
@@ -56,28 +69,27 @@ const CreatePin = ({ user }) => {
   };
 
   const savePin = () => {
-    if (title && about && destination && imageAsset?.id && category) {
-      const doc = {
-        _type: "pin",
-        title,
-        about,
-        destination,
-        image: {
-          _type: "image",
-          asset: {
-            _type: "reference",
-            _ref: imageAsset?.id,
-          },
-        },
+    if (title && about && destination && image && setCategoryId) {
+      const data = {
+        title: title,
+        about: about,
+        destination: destination,
+        image: image,
+        categoryId: categoryId,
         userId: user.id,
-        postedBy: {
-          _type: "postedBy",
-          _ref: user.id,
-        },
-        category,
       };
-
-      console.log(doc);
+      savePinDetail(data).then((resp) => {
+        console.log(resp);
+        toast(`🦄 ${resp.message}`, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          progress: undefined,
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      });
     } else {
       setFields(true);
 
@@ -89,6 +101,17 @@ const CreatePin = ({ user }) => {
 
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {fields && (
         <p className="text-red-500 mb-5 text-xl transition-all duration-150 ease-in ">
           请完善所有信息
@@ -99,7 +122,7 @@ const CreatePin = ({ user }) => {
           <div className=" flex justify-center items-center flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
             {loading && <Spinner />}
             {wrongImageType && <p>文件类型错误</p>}
-            {!imageAsset ? (
+            {image === "" ? (
               // eslint-disable-next-line jsx-a11y/label-has-associated-control
               <label>
                 <div className="flex flex-col items-center justify-center h-full">
@@ -124,15 +147,11 @@ const CreatePin = ({ user }) => {
               </label>
             ) : (
               <div className="relative h-full">
-                <img
-                  src={imageAsset?.url}
-                  alt="uploaded-pic"
-                  className="h-full w-full"
-                />
+                <img src={image} alt="uploaded-pic" className="h-full w-full" />
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                  onClick={() => setImageAsset(null)}
+                  onClick={() => setImage("")}
                 >
                   <MdDelete />
                 </button>
@@ -182,7 +201,7 @@ const CreatePin = ({ user }) => {
               <p className="mb-2 font-semibold text:lg sm:text-xl">分类</p>
               <select
                 onChange={(e) => {
-                  setCategory(e.target.value);
+                  setCategoryId(e.target.value);
                 }}
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
               >
@@ -192,7 +211,7 @@ const CreatePin = ({ user }) => {
                 {categories.map((item) => (
                   <option
                     className="text-base border-0 outline-none capitalize bg-white text-black "
-                    value={item.key}
+                    value={item.id}
                     key={item.key}
                   >
                     {item.name}

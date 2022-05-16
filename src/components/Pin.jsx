@@ -6,6 +6,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 
 import { fetchUser } from "../utils";
+import { deletePinById } from "../utils/APIUtils";
 
 const Pin = ({ pin }) => {
   const [postHovered, setPostHovered] = useState(false);
@@ -92,6 +93,10 @@ const Pin = ({ pin }) => {
                 <button
                   type="button"
                   onClick={(e) => {
+                    deletePinById(id).then((resp) => {
+                      console.log(resp);
+                      window.location.reload();
+                    });
                     e.stopPropagation();
                   }}
                   className="bg-white p-2 rounded-full w-8 h-8 flex items-center justify-center text-dark opacity-75 hover:opacity-100 outline-none"

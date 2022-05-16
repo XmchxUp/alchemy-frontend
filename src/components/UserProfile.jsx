@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
 import { fetchUser } from "../utils";
+import { getUserById } from "../utils/APIUtils";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
@@ -22,7 +23,13 @@ const UserProfile = () => {
   const User = fetchUser();
 
   useEffect(() => {
-    setUser(User);
+    if (userId != User.id) {
+      getUserById(userId).then((resp) => {
+        setUser(resp);
+      });
+    } else {
+      setUser(User);
+    }
   }, [userId]);
 
   useEffect(() => {

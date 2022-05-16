@@ -4,6 +4,13 @@ const request = (options) => {
   const headers = new Headers({
     "Content-Type": "application/json",
   });
+  // upload FILE https://stackoverflow.com/questions/35192841/how-do-i-post-with-multipart-form-data-using-fetch
+  if (options["headers"]) {
+    if (options["headers"]["Content-Type"] === "multipart/form-data") {
+      headers.delete("Content-Type");
+      delete options["headers"];
+    }
+  }
 
   if (localStorage.getItem(ACCESS_TOKEN)) {
     headers.append(
@@ -13,6 +20,7 @@ const request = (options) => {
   }
 
   const defaults = { headers: headers };
+
   options = Object.assign({}, defaults, options);
 
   return fetch(options.url, options).then((response) =>
@@ -39,7 +47,6 @@ export function githubLogin(code) {
     method: "POST",
   });
 }
-
 
 export function getCurrentUser() {
   if (!localStorage.getItem(ACCESS_TOKEN)) {
@@ -93,5 +100,55 @@ export function getPinDetail(pinId) {
   return request({
     url: API_BASE_URL + `/pin/${pinId}`,
     method: "GET",
+  });
+}
+
+export function savePinDetail(data) {
+  return request({
+    url: API_BASE_URL + `/pin`,
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deletePinById(pid) {
+  return request({
+    url: API_BASE_URL + `/pin/${pid}`,
+    method: "DELETE",
+  });
+}
+
+export function getUserById(uid) {
+  return request({
+    url: API_BASE_URL + `/user/${uid}`,
+    method: "GET",
+  });
+}
+
+export function uploadSingleFile(file) {
+  var formData = new FormData();
+  formData.append("file", file);
+  return request({
+    url: API_BASE_URL + `/file/upload`,
+    method: "POST",
+    body: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export function uploadMultipleFiles(files) {
+  var formData = new FormData();
+  for (var index = 0; index < files.length; index++) {
+    formData.append("files", files[index]);
+  }
+  return request({
+    url: API_BASE_URL + `/file/uploadMultipleFiles`,
+    method: "POST",
+    body: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 }
