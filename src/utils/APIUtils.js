@@ -96,6 +96,20 @@ export function getAllPin() {
   });
 }
 
+export function postComment(pinId, comment) {
+  return request({
+    url: API_BASE_URL + `/comment/save?comment=${comment}&pinId=${pinId}`,
+    method: "POST",
+  });
+}
+
+export function getRelevantPin(pinId) {
+  return request({
+    url: API_BASE_URL + `/pin/like?pinId=${pinId}`,
+    method: "GET",
+  });
+}
+
 export function getPinsByCategoryKey(key) {
   return request({
     url: API_BASE_URL + `/category/${key}/pins`,

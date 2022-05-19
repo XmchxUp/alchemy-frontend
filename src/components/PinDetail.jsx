@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MdDownloadForOffline } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { getPinDetail } from "../utils/APIUtils";
+import { getPinDetail, getRelevantPin, postComment } from "../utils/APIUtils";
 
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
@@ -10,39 +10,7 @@ import Spinner from "./Spinner";
 const PinDetail = ({ user }) => {
   const { pinId } = useParams();
   const [pins, setPins] = useState();
-  const [pinDetail, setPinDetail] = useState({
-    title: "testaaa",
-    about: "test",
-    image:
-      "https://i.pinimg.com/236x/2e/63/c8/2e63c82dfd49aca8dccf9de3f57e8588.jpg",
-    destination:
-      "https://i.pinimg.com/236x/2e/63/c8/2e63c82dfd49aca8dccf9de3f57e8588.jpg",
-    id: 1,
-    postedBy: {
-      id: 46,
-      nickname: "Tesla",
-      avatar: "https://avatars.githubusercontent.com/u/39235427?v=4",
-    },
-    comments: [
-      {
-        comment: "666",
-        postedBy: {
-          id: 46,
-          nickname: "Tesla",
-          avatar: "https://avatars.githubusercontent.com/u/39235427?v=4",
-        },
-      },
-
-      {
-        comment: "777",
-        postedBy: {
-          id: 46,
-          nickname: "Tesla",
-          avatar: "https://avatars.githubusercontent.com/u/39235427?v=4",
-        },
-      },
-    ],
-  });
+  const [pinDetail, setPinDetail] = useState();
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
 
@@ -50,16 +18,27 @@ const PinDetail = ({ user }) => {
     getPinDetail(pinId).then((resp) => {
       setPinDetail(resp);
     });
+
+    getRelevantPin(pinId).then((resp) => {
+      setPins(resp);
+    });
   }, [pinId]);
 
   const addComment = () => {
     if (comment) {
       setAddingComment(true);
+      postComment(pinId, comment).then((resp) => {
+        getPinDetail(pinId).then((resp) => {
+          setPinDetail(resp);
+        });
+        setComment("");
+        setAddingComment(false);
+      });
     }
   };
 
   if (!pinDetail) {
-    return <Spinner message="Showing pin" />;
+    return <Spinner message="加载中" />;
   }
 
   return (
@@ -108,7 +87,7 @@ const PinDetail = ({ user }) => {
               />
               <p className="font-bold">{pinDetail.postedBy.nickname}</p>
             </Link>
-            <h2 className="mt-5 text-2xl">Comments</h2>
+            <h2 className="mt-5 text-2xl">评论</h2>
             <div className="max-h-370 overflow-y-auto">
               {pinDetail?.comments?.map((item) => (
                 <div
@@ -155,14 +134,10 @@ const PinDetail = ({ user }) => {
       )}
       {pins?.length > 0 && (
         <h2 className="text-center font-bold text-2xl mt-8 mb-4">
-          More like this
+          相关的Pin
         </h2>
       )}
-      {pins ? (
-        <MasonryLayout pins={pins} />
-      ) : (
-        <Spinner message="Loading more pins" />
-      )}
+      {pins ? <MasonryLayout pins={pins} /> : <Spinner message="加载相关Pin" />}
     </>
   );
 };

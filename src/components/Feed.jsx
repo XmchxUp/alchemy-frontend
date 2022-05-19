@@ -30,12 +30,14 @@ const Feed = () => {
         console.log(resp);
         setPins(resp);
         setLoading(false);
+        setIdeaName("");
       });
     } else {
       setLoading(true);
       getAllPin().then((res) => {
         setPins(res);
         setLoading(false);
+        setIdeaName("");
       });
     }
   }, [categoryId]);
