@@ -31,7 +31,7 @@ const Pin = ({ pin }) => {
     }
   };
   if (savingPost) {
-    return <Spinner message="加载中！"/>;
+    return <Spinner message="保存中!"/>;
   }
 
   return (

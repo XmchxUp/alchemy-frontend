@@ -103,6 +103,13 @@ export function getPinsByCategoryKey(key) {
   });
 }
 
+export function searchPinsByTitleOrAbout(searchTerm) {
+  return request({
+    url: API_BASE_URL + `/pin/search?searchTerm=${searchTerm}`,
+    method: "GET",
+  });
+}
+
 export function getPinDetail(pinId) {
   return request({
     url: API_BASE_URL + `/pin/${pinId}`,

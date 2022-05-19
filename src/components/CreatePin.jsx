@@ -78,18 +78,26 @@ const CreatePin = ({ user }) => {
         categoryId: categoryId,
         userId: user.id,
       };
-      savePinDetail(data).then((resp) => {
-        console.log(resp);
-        toast(`🦄 ${resp.message}`, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          progress: undefined,
+      let message = "";
+      savePinDetail(data)
+        .then((resp) => {
+          console.log(resp);
+          message = resp.message;
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
+        })
+        .catch((err) => {
+          message = err.message;
+        })
+        .finally(() => {
+          toast(`🦄 ${message}`, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            progress: undefined,
+          });
         });
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      });
     } else {
       setFields(true);
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getAllPin, searchPinsByTitleOrAbout } from "../utils/APIUtils";
 
 import MasonryLayout from "./MasonryLayout";
 import Spinner from "./Spinner";
@@ -11,7 +12,10 @@ const Search = ({ searchTerm }) => {
     console.log(searchTerm);
     if (searchTerm !== "") {
       setLoading(true);
-    } else {
+      searchPinsByTitleOrAbout(searchTerm).then((resp) => {
+        setLoading(false);
+        setPins(resp);
+      });
     }
   }, [searchTerm]);
 
@@ -20,7 +24,7 @@ const Search = ({ searchTerm }) => {
       {loading && <Spinner message="Searching pins" />}
       {pins?.length !== 0 && <MasonryLayout pins={pins} />}
       {pins?.length === 0 && searchTerm !== "" && !loading && (
-        <div className="mt-10 text-center text-xl ">No Pins Found!</div>
+        <div className="mt-10 text-center text-xl ">没有相关内容!</div>
       )}
     </div>
   );
