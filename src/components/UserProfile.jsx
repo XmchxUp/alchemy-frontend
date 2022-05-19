@@ -56,7 +56,7 @@ const UserProfile = () => {
     navigate("/login");
   };
 
-  if (!user) return <Spinner message="Loading profile" />;
+  if (!user) return <Spinner message="加载信息中" />;
 
   return (
     <div className="relative pb-2 h-full justify-center items-center">
@@ -122,7 +122,7 @@ const UserProfile = () => {
 
         {pins?.length === 0 && (
           <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
-            No Pins Found!
+            没有任何信息！
           </div>
         )}
       </div>

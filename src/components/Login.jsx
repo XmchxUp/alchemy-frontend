@@ -181,12 +181,11 @@ const Login = () => {
   };
 
   const handleRegisterModal = () => {
-    setRegUserInfo({
-      ...regUserInfo,
-      nickname: "Tesla" + uuid(),
-    });
     let msg = "";
-    register(regUserInfo)
+    register({
+      ...regUserInfo,
+      nickname: "TeslaAAAA" + uuid(),
+    })
       .then((response) => {
         console.log(response);
         msg = "注册成功, 请去登陆！";
@@ -359,7 +358,9 @@ const Login = () => {
               </Text>
             </Modal.Header>
             <Modal.Body>
-              <Text id="modal-description"  color="green">客官不可以有顔色哦 By Tesla</Text>
+              <Text id="modal-description" color="green">
+                客官不可以有顔色哦 By Tesla
+              </Text>
             </Modal.Body>
             <Modal.Footer>
               <Button auto flat color="error" onClick={() => setVisible(false)}>
