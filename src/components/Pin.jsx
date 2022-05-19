@@ -6,23 +6,33 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 
 import { fetchUser } from "../utils";
-import { deletePinById } from "../utils/APIUtils";
+import { deletePinById, userSavePin } from "../utils/APIUtils";
+import Spinner from "./Spinner";
 
 const Pin = ({ pin }) => {
   const [postHovered, setPostHovered] = useState(false);
+  const [savingPost, setSavingPost] = useState(false);
   const { postedBy, image, id, destination } = pin;
 
   const navigate = useNavigate();
 
   const user = fetchUser();
-  let alreadySaved = !!pin?.save?.filter(
-    (item) => item?.postedBy?.id === user?.id
-  )?.length;
+  let alreadySaved = !!pin?.save?.filter((item) => item?.uid === user?.id)
+    ?.length;
 
-  const savePin = (id) => {
+  const savePin = (pid) => {
     if (!alreadySaved) {
+      setSavingPost(true);
+      userSavePin(pid).then((resp) => {
+        setSavingPost(false);
+        console.log(resp);
+        window.location.reload();
+      });
     }
   };
+  if (savingPost) {
+    return <Spinner message="加载中！"/>;
+  }
 
   return (
     <div className="m-2">
@@ -64,12 +74,12 @@ const Pin = ({ pin }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("save");
+                    savePin(id);
                   }}
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
                 >
-                  {pin?.save?.length} Save
+                  Save
                 </button>
               )}
             </div>

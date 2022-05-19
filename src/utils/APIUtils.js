@@ -118,9 +118,30 @@ export function deletePinById(pid) {
   });
 }
 
+export function userSavePin(pid) {
+  return request({
+    url: API_BASE_URL + `/pin/saved?pid=${pid}`,
+    method: "POST",
+  });
+}
+
 export function getUserById(uid) {
   return request({
     url: API_BASE_URL + `/user/${uid}`,
+    method: "GET",
+  });
+}
+
+export function getUserCreatedPinByUid(uid) {
+  return request({
+    url: API_BASE_URL + `/pin/created?uid=${uid}`,
+    method: "GET",
+  });
+}
+
+export function getUserSavedPinByUid(uid) {
+  return request({
+    url: API_BASE_URL + `/pin/saved?uid=${uid}`,
     method: "GET",
   });
 }
