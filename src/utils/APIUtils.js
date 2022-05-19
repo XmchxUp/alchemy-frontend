@@ -96,6 +96,13 @@ export function getAllPin() {
   });
 }
 
+export function getPinsByCategoryKey(key) {
+  return request({
+    url: API_BASE_URL + `/category/${key}/pins`,
+    method: "GET",
+  });
+}
+
 export function getPinDetail(pinId) {
   return request({
     url: API_BASE_URL + `/pin/${pinId}`,
